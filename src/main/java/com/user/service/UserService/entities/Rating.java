@@ -16,7 +16,7 @@ import lombok.Setter;
 @NoArgsConstructor
 public class Rating {
 
-    private String ratingId;
+    private Long ratingId;
     private Long userId;
     private Long hotelId;
     private Long rating;

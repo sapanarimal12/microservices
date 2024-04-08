@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import java.util.Arrays;
@@ -43,7 +44,26 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User saveUser(User user) {
+        Rating rating = webClientBuilder.build()
+                .post()
+                .uri("http://RATING-SERVICE/ratings")
+                .body(BodyInserters.fromValue(getRatingRequest()))
+                .retrieve()
+                .bodyToMono(Rating.class)
+                .block();
+        logger.info("Ratings :: " , rating);
+
+//        List<Rating> ratings = Arrays.stream(rating).toList();
         return userRepository.save(user);
+    }
+
+    private Rating getRatingRequest() {
+        Rating rating = new Rating();
+        rating.setUserId(2L);
+        rating.setHotelId(3L);
+        rating.setRating(8L);
+        rating.setFeedback("It is a very good hotel.");
+        return rating;
     }
 
     @Override
